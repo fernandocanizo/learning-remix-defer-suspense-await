@@ -12,7 +12,10 @@ import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 
-const ABORT_DELAY = 5_000;
+// By default Remix projects come with an ABORT_DELAY preset at 5000
+// milliseconds, I'm increasing the timeout to be able to play with different
+// delays since this is a demo repo
+const ABORT_DELAY = 60_000;
 
 export default function handleRequest(
   request: Request,

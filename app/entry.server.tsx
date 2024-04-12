@@ -11,12 +11,7 @@ import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
-
-const getAbortDelay = (): number => {
-  const defaultDelay = 60_000
-  const configuredDelay = Number(process.env.ABORT_DELAY)
-  return configuredDelay ? configuredDelay : defaultDelay
-}
+import { getAbortDelay } from "~/../config"
 
 export default function handleRequest(
   request: Request,

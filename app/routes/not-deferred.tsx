@@ -16,11 +16,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ milliseconds, datum })
 }
 
-export default function Product() {
+export default function NotDeferred() {
   const { milliseconds, datum } = useLoaderData<typeof loader>()
 
   return (
     <div>
+      <p>All content will appear at once after some delay.</p>
       <p>&quot;{datum}&quot; received after {milliseconds} milliseconds.</p>
     </div>
   )

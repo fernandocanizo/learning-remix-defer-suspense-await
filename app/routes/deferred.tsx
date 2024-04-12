@@ -2,11 +2,10 @@ import type { LoaderFunctionArgs } from "@remix-run/node"
 import { defer } from "@remix-run/node"
 import { useLoaderData, Await } from "@remix-run/react"
 import { Suspense } from "react"
+import { env } from "node:process"
 
-// TODO I wanted to make a single curried function from `delay` and `delayData`
-// but Typescript gave me a headache
-const delay = (milliseconds: number): Promise<string> =>
-  new Promise(resolve => setTimeout(resolve, milliseconds))
+import { getAbortDelay } from "config"
+import { delay } from "~/lib/delay"
 
 const delayData = async (data: string, milliseconds: number): Promise<string> => {
   await delay(milliseconds)
@@ -14,18 +13,17 @@ const delayData = async (data: string, milliseconds: number): Promise<string> =>
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+console.log({env})
   const defaultDelay = 3000 // ms, 3 seconds
   // A little cherry to play with different delays from the browser
   const url = new URL(request.url)
   let ms = Number(url.searchParams.get("ms"))
-  // By default Node.js or Remix or something has a 5 seconds timeout
-  // Don't know where to configure that yet
-  ms = ms && ms < 5000 ? ms : defaultDelay
+  ms = ms && ms < getAbortDelay() ? ms : defaultDelay
 
   return defer({
     milliseconds: ms,
-    firstData: delayData("First datum", 1000),
-    secondData: delayData("Second datum", 4000),
+    firstData: delayData("First datum", ms),
+    secondData: delayData("Second datum", ms + 2000),
     })
 }
 

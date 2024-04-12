@@ -12,10 +12,11 @@ import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 
-// By default Remix projects come with an ABORT_DELAY preset at 5000
-// milliseconds, I'm increasing the timeout to be able to play with different
-// delays since this is a demo repo
-const ABORT_DELAY = 60_000;
+const getAbortDelay = (): number => {
+  const defaultDelay = 60_000
+  const configuredDelay = Number(process.env.ABORT_DELAY)
+  return configuredDelay ? configuredDelay : defaultDelay
+}
 
 export default function handleRequest(
   request: Request,
@@ -54,7 +55,7 @@ function handleBotRequest(
       <RemixServer
         context={remixContext}
         url={request.url}
-        abortDelay={ABORT_DELAY}
+        abortDelay={getAbortDelay()}
       />,
       {
         onAllReady() {
@@ -88,7 +89,7 @@ function handleBotRequest(
       }
     );
 
-    setTimeout(abort, ABORT_DELAY);
+    setTimeout(abort, getAbortDelay());
   });
 }
 
@@ -104,7 +105,7 @@ function handleBrowserRequest(
       <RemixServer
         context={remixContext}
         url={request.url}
-        abortDelay={ABORT_DELAY}
+        abortDelay={getAbortDelay()}
       />,
       {
         onShellReady() {
@@ -138,6 +139,6 @@ function handleBrowserRequest(
       }
     );
 
-    setTimeout(abort, ABORT_DELAY);
+    setTimeout(abort, getAbortDelay());
   });
 }
